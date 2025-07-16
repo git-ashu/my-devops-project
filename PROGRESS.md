@@ -9,10 +9,11 @@
 - [x] Write Dockerfile & build image
 - [x] Push image to DockerHub
 
-✅ Phase 3: Infra as Code (Terraform)
+🟩 Phase 3: Infra as Code (Terraform)
 - [x] Write EKS + Redis Terraform modules
 - [x] Run terraform init/plan/apply
 - [x] Configure kubectl
+- [x] Push code to GitHub with proper .gitignore
 
 🟨 Phase 4: Kubernetes Deployments
 - [ ] Create Helm chart for app + Redis
@@ -38,15 +39,21 @@
 ## Project Structure
 
 my-devops-project/
-├── app/ # Flask app
-│ ├── app.py
-│ ├── requirements.txt
-│ └── Dockerfile
-├── terraform/ # EKS, Redis, VPC configs
-│ ├── main.tf
-│ ├── variables.tf
-│ ├── outputs.tf
-│ ├── versions.tf
+├── app/              # Flask app
+│   ├── app.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── terraform/        # EKS, Redis, VPC configs
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   ├── versions.tf
+│   └── aws-auth.yaml
+├── helm/             # Helm chart (next phase)
+├── .gitignore
+├── PROGRESS.md
+└── README.md
+
 ├── helm/ # Helm chart for app
 ├── PROGRESS.md # Your current roadmap
 └── README.md # For future GitHub repo
