@@ -13,6 +13,8 @@ jobs:
     env:
       IMAGE_NAME: ashup1997/flask-devops-app
       IMAGE_TAG: latest
+      AWS_REGION: ap-south-1
+      EKS_CLUSTER: devops-eks-cluster
 
     steps:
       - name: Checkout code
@@ -40,20 +42,28 @@ jobs:
         run: |
           docker push $IMAGE_NAME:$IMAGE_TAG
 
-      - name: Set up kubectl
+      - name: Install kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: 'latest'
 
-      - name: Configure Kubeconfig
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig.yaml
-          echo "KUBECONFIG=$PWD/kubeconfig.yaml" >> $GITHUB_ENV
-
       - name: Install Helm
         uses: azure/setup-helm@v3
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER
+
       - name: Deploy to EKS using Helm
         run: |
-          helm upgrade --install myapp ./helm/myapp --namespace dev --create-namespace
-
+          helm upgrade --install myapp ./helm/myapp \
+            --namespace dev \
+            --create-namespace \
+            --set image.repository=$IMAGE_NAME,image.tag=$IMAGE_TAG
